@@ -13,17 +13,16 @@ div {
     line-height: 12px;
     width: 480px;
     height: 480px;
-    padding: 20px;
-}
+    padding: 20px;}
 
 .row {
-    width: 100%;
+        width: 100%;
 }
 
 .square {
-    float: left;
-    width: 60px;
-    height: 60px;
+  float: left;
+        width: 60px;
+ height: 60px;
 }
 
 .square:hover {
