@@ -106,15 +106,14 @@ angular
 				// mid turn
 				console.log("\nMID TURN");
 				checkMove(square);
-				resetChoices();
 			}
 		};
 
 		// Check if selected move is legal
-		function checkMove(square) {
+		function checkMove(destination) {
 			console.log("$scope.board");
 			console.log($scope.board);
-			console.log($scope.board[square.y][square.x]);
+			console.log($scope.board[destination.y][destination.x]);
 
 			let FL, JL, FR, JR;
 			// set dynamically depending on which player
@@ -129,24 +128,28 @@ angular
 			}
 
 			try {
-				if (square.player == null) {
+				if (destination.player == null) {
 					// Check Left Normal
-					if (FL.x == square.x && FL.y == square.y) {
+					if (FL.x == destination.x && FL.y == destination.y) {
 						console.log("FL");
-						doMove(base, square);
+						doMove(base, destination);
 						// reset turn variables --> next player turn
 						changeTurn();
 					}
 					// Check Left Jump
-					if (JL.x == square.x && JL.y == square.y) {
+					if (JL.x == destination.x && JL.y == destination.y) {
 						let checkSpace = $scope.board[FL.y][FL.x];
 						console.log(checkSpace.player);
-						if (checkSpace.player == null) {
-							console.log("FR");
+						if (
+							checkSpace.player != $scope.player &&
+							checkSpace.player != null
+						) {
+							console.log("JL");
 						}
 					}
+
 					// Check Right Normal
-					if (FR.x == square.x && FR.y == square.y) {
+					if (FR.x == destination.x && FR.y == destination.y) {
 						console.log("FR");
 					}
 					// Check Right Jump
