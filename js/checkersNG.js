@@ -69,7 +69,7 @@ angular
 			if (tile.y % 2 === 0) {
 				if (tile.x % 2 === 0) {
 					return {
-						backgroundColor: tile.isChoice ? "green" : C_BLACK,
+						backgroundColor: tile.isPlayable ? "green" : C_BLACK,
 					};
 				} else {
 					return { backgroundColor: C_WHITE };
@@ -77,7 +77,7 @@ angular
 			} else {
 				if (tile.x % 2 === 1) {
 					return {
-						backgroundColor: tile.isChoice ? "green" : C_BLACK,
+						backgroundColor: tile.isPlayable ? "green" : C_BLACK,
 					};
 				} else {
 					return { backgroundColor: C_WHITE };
