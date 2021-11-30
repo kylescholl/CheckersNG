@@ -132,7 +132,10 @@ angular
 			console.log($scope.board);
 			console.log($scope.board[destination.y][destination.x]);
 
-			let FL, JL, FR, JR;
+			let FL,
+				JL,
+				FR,
+				JR = 0;
 			// dynamically set depending on $scope.playerturn
 			if ($scope.playerturn == P1) {
 				console.log(P1);
@@ -142,6 +145,10 @@ angular
 				JR = { x: base.x + 2, y: base.y - 2 };
 			} else {
 				console.log(P2);
+				FL = { x: base.x + 1, y: base.y + 1 };
+				JL = { x: base.x + 2, y: base.y + 2 };
+				FR = { x: base.x - 1, y: base.y + 1 };
+				JR = { x: base.x - 2, y: base.y + 2 };
 			}
 
 			try {
@@ -238,7 +245,7 @@ angular
 		}
 
 		function changeTurn() {
-			resetChoices();
+			base = null;
 			isMoving = false;
 			switch ($scope.playerturn) {
 				case P1:
@@ -251,9 +258,8 @@ angular
 					break;
 			}
 		}
-	});
 
-// Located here for scope visibility from HTML button call
-function resetChoices() {
-	base = null;
-}
+		$scope.resetChoice = function () {
+			base = null;
+		};
+	});

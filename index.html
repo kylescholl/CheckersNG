@@ -17,24 +17,20 @@
 		</div>
 	</div>
 
-	<div class="textdisplay">Player Turn : {{playerturn}}</div>
-	<div class="textdisplay">White Score : {{scoreP1}}</div>
-	<div class="textdisplay">Black Score : {{scoreP2}}</div>
+	<div class="textDisplay">
+		<div>Player Turn : {{playerturn}}</div>
+		<div>White Score : {{scoreP1}}</div>
+		<div>Black Score : {{scoreP2}}</div>
+	</div>
+
 
 	<div class="btn-container">
-		<button type="button" class="btn btn-primary" onclick="resetChoices()">Reset Piece Selection</button>
+		<button type="button" ng-click="resetChoice()" class="btn btn-custom">Reset Piece Selection</button>
 	</div>
 
 	<script type="text/javascript" src="js/angular.js"></script>
 	<script type="text/javascript" src="js/jquery-3.6.0.min.js"></script>
 	<script type="text/javascript" src="js/checkersNG.js"></script>
 </body>
-
-<!-- <body onload="gameStart(8,8)">
-    <div id="buttonArea"></div>
-    <input type="button" id="btnNewGame" onClick="resetButtons()" value="Reset Buttons" />
-    <input type="button" id="btnResetSelection" onClick="resetSelection()" value="Click to reset starting piece" />
-    <input type="button" id="btnTest" onClick="initializeBoard()" value="--set initial positions--" />
-</body> -->
 
 </html>
