@@ -1,6 +1,7 @@
-# ngCheckers---PSU-Hof
-<h1>Welcome to our ngCheckers' GitHub repo!</h1>
-<h2>How Branches will work:</h2>
+<h1>Welcome to our AngularJS Checkers GitHub Repo!</h1>
+<h2>Penn State & Hof University</h2>
+
+<h3>How Branches will work:</h3>
 
 - There is a **main** branch which holds the **working bug-free code**
 - Everyone will have their **own** branch for development
