@@ -1,26 +1,25 @@
 angular
 	.module("checkersNG", [])
 	.controller("checkersController", function ($scope, $timeout) {
-		let C_P1 = "#D1603D",
+		const C_P1 = "#D1603D",
 			C_P2 = "#808080",
 			C_BLACK = "#221D23",
 			C_WHITE = "#EEEEEE";
-		let P1 = "Orange",
+		const P1 = "Orange",
 			P2 = "Black";
-		let BOARD_WIDTH = 8;
-		let base = null;
+		const BOARD_WIDTH = 8;
 		let isMoving = false;
+		let start = null;
 
 		function Piece(player, x, y) {
 			this.player = player;
 			this.x = x;
 			this.y = y;
-			this.isChoice = false;
-			this.myList = [];
+			this.isPlayable = false;
 		}
 
 		$scope.newGame = function () {
-			$scope.playerturn = P1;
+			$scope.playerTurn = P1;
 			$scope.scoreP1 = 0;
 			$scope.scoreP2 = 0;
 			$scope.board = [];
@@ -51,36 +50,31 @@ angular
 		$scope.newGame();
 
 		// Player Piece Coloring
-		var counter_ = 0;
-		$scope.setStyling = function (square) {
-			// console.log(counter_);
-			if (square.player === P1) {
-				counter_++;
+		$scope.setStyling = function (tile) {
+			if (tile.player === P1) {
 				return { backgroundColor: C_P1 };
-			} else if (square.player === P2) {
-				counter_++;
+			} else if (tile.player === P2) {
 				return { backgroundColor: C_P2 };
 			} else {
-				counter_++;
 				return { backgroundColor: "none" };
 			}
 		};
 
 		// ! May need to remove
 		// Board Tile Coloring
-		$scope.setClass = function (square) {
-			if (square.y % 2 === 0) {
-				if (square.x % 2 === 0) {
+		$scope.setClass = function (tile) {
+			if (tile.y % 2 === 0) {
+				if (tile.x % 2 === 0) {
 					return {
-						backgroundColor: square.isChoice ? "green" : C_BLACK,
+						backgroundColor: tile.isChoice ? "green" : C_BLACK,
 					};
 				} else {
 					return { backgroundColor: C_WHITE };
 				}
 			} else {
-				if (square.x % 2 === 1) {
+				if (tile.x % 2 === 1) {
 					return {
-						backgroundColor: square.isChoice ? "green" : C_BLACK,
+						backgroundColor: tile.isChoice ? "green" : C_BLACK,
 					};
 				} else {
 					return { backgroundColor: C_WHITE };
@@ -89,15 +83,15 @@ angular
 		};
 
 		// Player Square Selection
-		$scope.select = function (square) {
+		$scope.select = function (tile) {
 			console.log("");
 			if (!isMoving) {
-				if (square.player === $scope.playerturn) {
+				if (tile.player === $scope.playerTurn) {
 					// New Turn
 					console.log("\nNEW TURN");
-					console.log(square);
+					console.log(tile);
 					// Assign base
-					base = square;
+					start = tile;
 					// Get available moves
 					// let moves = getMoves(square);
 					// Highlight playable moves
@@ -108,14 +102,16 @@ angular
 			} else {
 				// Mid Turn
 				console.log("\nMID TURN");
-				console.log(square);
-				checkMove(square);
+				console.log(tile);
+				checkMove(tile);
 			}
 			try {
-				$scope.base_ = `{player: ${base.player}, x: ${base.x}, y: ${base.y}}`;
+				$scope.selectedPiece = `{${start.player}, (${start.x}, ${start.y})}`;
 			} catch (error) {}
 		};
 
+		// ? So... isn't this kinda pointless now?
+		/*
 		$(document).ready(function () {
 			const divs = document.getElementsByClassName("square");
 			let index = 0;
@@ -127,54 +123,56 @@ angular
 				}
 			}
 		});
+		*/
 
 		// Check if selected move is legal
-		function checkMove(destination) {
+		function checkMove(end) {
 			// console.log("$scope.board");
 			// console.log($scope.board);
-			console.log($scope.board[destination.y][destination.x]);
+			console.log($scope.board[end.y][end.x]);
 
 			let FL, JL, FR, JR;
-			// dynamically set depending on $scope.playerturn
-			if ($scope.playerturn == P1) {
+			// dynamically set depending on $scope.playerTurn
+			if ($scope.playerTurn == P1) {
 				console.log(P1);
-				FL = { x: base.x - 1, y: base.y - 1 };
-				JL = { x: base.x - 2, y: base.y - 2 };
-				FR = { x: base.x + 1, y: base.y - 1 };
-				JR = { x: base.x + 2, y: base.y - 2 };
+				FL = { x: start.x - 1, y: start.y - 1 };
+				JL = { x: start.x - 2, y: start.y - 2 };
+				FR = { x: start.x + 1, y: start.y - 1 };
+				JR = { x: start.x + 2, y: start.y - 2 };
 			} else {
 				console.log(P2);
-				FL = { x: base.x + 1, y: base.y + 1 };
-				JL = { x: base.x + 2, y: base.y + 2 };
-				FR = { x: base.x - 1, y: base.y + 1 };
-				JR = { x: base.x - 2, y: base.y + 2 };
+				FL = { x: start.x + 1, y: start.y + 1 };
+				JL = { x: start.x + 2, y: start.y + 2 };
+				FR = { x: start.x - 1, y: start.y + 1 };
+				JR = { x: start.x - 2, y: start.y + 2 };
 			}
 
 			try {
-				if (destination.player == null) {
+				if (end.player == null) {
 					// Check Left Normal
-					if (FL.x == destination.x && FL.y == destination.y) {
+					if (FL.x == end.x && FL.y == end.y) {
 						console.log("FL");
-						doMove(base, destination, null);
+						doMove(start, end, null);
 						changeTurn();
 					}
 					// Check Left Jump
-					if (JL.x == destination.x && JL.y == destination.y) {
+					if (JL.x == end.x && JL.y == end.y) {
 						let checkSpace = $scope.board[FL.y][FL.x];
 						console.log(checkSpace.player);
 						if (
-							checkSpace.player != $scope.playerturn &&
+							checkSpace.player != $scope.playerTurn &&
 							checkSpace.player != null
 						) {
 							console.log("JL");
+							doMove(start, end, checkSpace);
 							changeTurn();
 						}
 					}
 
 					// Check Right Normal
-					if (FR.x == destination.x && FR.y == destination.y) {
+					if (FR.x == end.x && FR.y == end.y) {
 						console.log("FR");
-						doMove(base, destination, null);
+						doMove(start, end, null);
 						changeTurn();
 					}
 					// Check Right Jump
@@ -188,15 +186,15 @@ angular
 
 		// Execute the Player's Move
 		function doMove(start_, end_, toDestroy_) {
-			let start_row = start_.y;
-			let start_col = start_.x;
+			const start_row = start_.y;
+			const start_col = start_.x;
 
-			let end_row = end_.y;
-			let end_col = end_.x;
+			const end_row = end_.y;
+			const end_col = end_.x;
 
 			try {
 				$scope.board[end_row][end_col] = new Piece(
-					$scope.playerturn,
+					$scope.playerTurn,
 					end_col,
 					end_row
 				);
@@ -206,7 +204,7 @@ angular
 					start_row
 				);
 				if (toDestroy_) {
-					switch ($scope.playerturn) {
+					switch ($scope.playerTurn) {
 						case P1:
 							$scope.scoreP1 = parseInt($scope.scoreP1) + 1;
 							break;
@@ -221,7 +219,6 @@ angular
 
 					const destroy_row = toDestroy_.y;
 					const destroy_col = toDestroy_.x;
-
 					$scope.board[destroy_row][destroy_col] = new Piece(
 						null,
 						destroy_col,
@@ -247,15 +244,22 @@ angular
 			// code //
 		}
 
+		function isGameover() {
+			// code //
+			if ($scope.scoreP1 > 8) {
+				console.log("Gameover: Congratulations P1");
+			}
+		}
+
 		function changeTurn() {
-			base = null;
+			start = null;
 			isMoving = false;
-			switch ($scope.playerturn) {
+			switch ($scope.playerTurn) {
 				case P1:
-					$scope.playerturn = P2;
+					$scope.playerTurn = P2;
 					break;
 				case P2:
-					$scope.playerturn = P1;
+					$scope.playerTurn = P1;
 					break;
 				default:
 					break;
@@ -263,6 +267,8 @@ angular
 		}
 
 		$scope.resetChoice = function () {
-			base = null;
+			start = null;
+			isMoving = false;
+			$scope.selectedPiece = " ";
 		};
 	});

@@ -55,13 +55,18 @@ div.btn-container {
 	width: 100%;
 }
 
-.square {
+.tile {
 	float: left;
 	width: 3.75rem;
 	height: 3.75rem;
 }
 
-.square:hover {
+/* .tile:hover {
+	cursor: pointer;
+	opacity: 0.8;
+} */
+
+.tile:hover:nth-child(2n + 1) {
 	cursor: pointer;
 	opacity: 0.8;
 }

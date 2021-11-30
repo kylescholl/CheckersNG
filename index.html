@@ -10,26 +10,23 @@
 <body ng-controller="checkersController">
 	<div id="gameContainer">
 		<div class="row" ng-repeat="row in board">
-			<div class="square" ng-style="setClass(square)" ng-repeat="square in row track by $index"
-				ng-click="select(square)">
-				<div ng-style="setStyling(square)" class="circle"></div>
+			<div class="tile" ng-style="setClass(tile)" ng-repeat="tile in row track by $index" ng-click="select(tile)">
+				<div ng-style="setStyling(tile)" class="circle"></div>
 			</div>
 		</div>
 	</div>
 
 	<div class="textDisplay">
-		<div>Player Turn : {{playerturn}}</div>
+		<div>Player Turn : {{playerTurn}}</div>
 		<div>White Score : {{scoreP1}}</div>
 		<div>Black Score : {{scoreP2}}</div>
 
-		<div>base : {{base_}}</div>
-
+		<div style="font-size: 1.5rem;">{{selectedPiece}}</div>
 	</div>
 
 
 	<div class="btn-container">
 		<button type="button" ng-click="resetChoice()" class="btn btn-custom">Reset Piece Selection</button>
-		<button type="button" ng-click="update_()" class="btn btn-custom">zzzzzzzz</button>
 	</div>
 
 	<script type="text/javascript" src="js/angular.js"></script>
