@@ -113,7 +113,6 @@ angular
 			} catch (error) {}
 		};
 
-		// ? So... isn't this kinda pointless now?
 		/*
 		$(document).ready(function () {
 			const divs = document.getElementsByClassName("square");
