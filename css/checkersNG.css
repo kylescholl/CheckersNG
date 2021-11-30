@@ -2,7 +2,7 @@
 	--white: #eeeeee;
 	--black: #221d23;
 	--orange: #d1603d;
-	--orange-2: #d35a35;
+	--orange-dark: #db471a;
 	/* font-size: 24px; */
 	font-family: "Courier New", Courier, monospace;
 }
@@ -29,15 +29,15 @@ div.btn-container {
 }
 
 .btn-custom {
-	color: #fff;
+	color: var(--white);
 	background-color: var(--orange);
 	/* border-color: var(--orange-dark); */
 	margin: 0 auto;
 }
 
 .btn-custom:hover {
-	color: #fff;
-	background-color: var(--orange-2);
+	color: var(--white);
+	background-color: var(--orange-dark);
 	/* border-color: var(--orange-dark); */
 }
 

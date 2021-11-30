@@ -16,12 +16,15 @@ angular
 			this.x = x;
 			this.y = y;
 			this.isPlayable = false;
+			this.selected = false;
 		}
 
 		$scope.newGame = function () {
 			$scope.playerTurn = P1;
 			$scope.scoreP1 = 0;
 			$scope.scoreP2 = 0;
+			$scope.nameP1 = P1;
+			$scope.nameP2 = P2;
 			$scope.board = [];
 			isMoving = false;
 
@@ -168,7 +171,6 @@ angular
 							changeTurn();
 						}
 					}
-
 					// Check Right Normal
 					if (FR.x == end.x && FR.y == end.y) {
 						console.log("FR");
@@ -176,6 +178,18 @@ angular
 						changeTurn();
 					}
 					// Check Right Jump
+					if (JR.x == end.x && JR.y == end.y) {
+						let checkSpace = $scope.board[FR.y][FR.x];
+						console.log(checkSpace.player);
+						if (
+							checkSpace.player != $scope.playerTurn &&
+							checkSpace.player != null
+						) {
+							console.log("JR");
+							doMove(start, end, checkSpace);
+							changeTurn();
+						}
+					}
 				}
 
 				// TODO: Check if against/near wall
@@ -247,7 +261,10 @@ angular
 		function isGameover() {
 			// code //
 			if ($scope.scoreP1 > 8) {
-				console.log("Gameover: Congratulations P1");
+				console.log(`Gameover: Congratulations ${P1}!`);
+			}
+			if ($scope.scoreP2 > 8) {
+				console.log(`Gameover: Congratulations ${P2}!`);
 			}
 		}
 
