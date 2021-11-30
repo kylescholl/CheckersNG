@@ -96,6 +96,7 @@ angular
 					console.log("\nNEW TURN");
 					console.log(tile);
 					start = tile;
+					start.selected = true;
 					// Get available moves
 					// let moves = getMoves(square);
 					// Highlight playable moves
@@ -137,9 +138,11 @@ angular
 		 */
 
 		// Returns All Playable Moves
-		function getMoves(end) {
+		function getMoves() {
+			// TODO: add king piece logic
 			let FL, JL, FR, JR;
 			let FL_, JL_, FR_, JR_; // represent going backwards
+
 			// dynamically set depending on $scope.playerTurn
 			if ($scope.playerTurn == P1) {
 				console.log(P1);
@@ -148,7 +151,7 @@ angular
 				FR = { x: start.x + 1, y: start.y - 1 };
 				JR = { x: start.x + 2, y: start.y - 2 };
 				if (start.isKing) {
-					// FL_, JL_, FR_, JR_
+					// TODO: FL_, JL_, FR_, JR_
 				}
 			} else {
 				console.log(P2);
@@ -157,138 +160,58 @@ angular
 				FR = { x: start.x - 1, y: start.y + 1 };
 				JR = { x: start.x - 2, y: start.y + 2 };
 				if (start.isKing) {
-					// FL_, JL_, FR_, JR_
+					// TODO: FL_, JL_, FR_, JR_
 				}
 			}
 
 			try {
-				if (end.player == null) {
-					// Check Left Normal
-					if (FL.x == end.x && FL.y == end.y) {
-						console.log("FL");
-						doMove(start, end, null);
-						changeTurn();
-					}
-					// Check Left Jump
-					if (JL.x == end.x && JL.y == end.y) {
-						let checkSpace = $scope.board[FL.y][FL.x];
-						console.log(checkSpace.player);
-						if (
-							checkSpace.player != $scope.playerTurn &&
-							checkSpace.player != null
-						) {
-							console.log("JL");
-							doMove(start, end, checkSpace);
-							changeTurn();
-						}
-					}
-					// Check Right Normal
-					if (FR.x == end.x && FR.y == end.y) {
-						console.log("FR");
-						doMove(start, end, null);
-						changeTurn();
-					}
-					// Check Right Jump
-					if (JR.x == end.x && JR.y == end.y) {
-						let checkSpace = $scope.board[FR.y][FR.x];
-						console.log(checkSpace.player);
-						if (
-							checkSpace.player != $scope.playerTurn &&
-							checkSpace.player != null
-						) {
-							console.log("JR");
-							doMove(start, end, checkSpace);
-							changeTurn();
-						}
+				// Check Forward Left
+				if ($scope.board[FL.y][FL.x] == null) {
+					console.log("FL");
+					$scope.board[FL.y][FL.x].isPlayable = true;
+				}
+				// Check Jump Left
+				if ($scope.board[JL.y][JL.x] == null) {
+					let hopped = $scope.board[FL.y][FL.x];
+					console.log(hopped.player);
+					if (
+						hopped.player != $scope.playerTurn &&
+						hopped.player != null
+					) {
+						console.log("JL");
+						$scope.board[JL.y][JL.x].isPlayable = true;
 					}
 				}
-
-				// TODO: Check if against/near wall
+				// Check Forward Right
+				if ($scope.board[FR.y][FR.x] == null) {
+					console.log("FR");
+					$scope.board[FR.y][FR.x].isPlayable = true;
+				}
+				// Check Jump Right
+				if ($scope.board[JR.y][JR.x] == null) {
+					let hopped = $scope.board[FR.y][FR.x];
+					console.log(hopped.player);
+					if (
+						hopped.player != $scope.playerTurn &&
+						hopped.player != null
+					) {
+						console.log("JR");
+						$scope.board[JR.y][JR.x].isPlayable = true;
+					}
+				}
 			} catch (error) {
 				console.error(error);
 			}
 		}
 
-		// Check if selected move is legal
-		function checkMove(end) {
-			// console.log("$scope.board");
-			// console.log($scope.board);
-			console.log($scope.board[end.y][end.x]);
-
-			let FL, JL, FR, JR;
-			let FL_, JL_, FR_, JR_; // represent going backwards
-			// dynamically set depending on $scope.playerTurn
-			if ($scope.playerTurn == P1) {
-				console.log(P1);
-				FL = { x: start.x - 1, y: start.y - 1 };
-				JL = { x: start.x - 2, y: start.y - 2 };
-				FR = { x: start.x + 1, y: start.y - 1 };
-				JR = { x: start.x + 2, y: start.y - 2 };
-				if (start.isKing) {
-				}
-			} else {
-				console.log(P2);
-				FL = { x: start.x + 1, y: start.y + 1 };
-				JL = { x: start.x + 2, y: start.y + 2 };
-				FR = { x: start.x - 1, y: start.y + 1 };
-				JR = { x: start.x - 2, y: start.y + 2 };
-			}
-
-			try {
-				if (end.player == null) {
-					// Check Left Normal
-					if (FL.x == end.x && FL.y == end.y) {
-						console.log("FL");
-						doMove(start, end, null);
-						changeTurn();
-					}
-					// Check Left Jump
-					if (JL.x == end.x && JL.y == end.y) {
-						let checkSpace = $scope.board[FL.y][FL.x];
-						console.log(checkSpace.player);
-						if (
-							checkSpace.player != $scope.playerTurn &&
-							checkSpace.player != null
-						) {
-							console.log("JL");
-							doMove(start, end, checkSpace);
-							changeTurn();
-						}
-					}
-					// Check Right Normal
-					if (FR.x == end.x && FR.y == end.y) {
-						console.log("FR");
-						doMove(start, end, null);
-						changeTurn();
-					}
-					// Check Right Jump
-					if (JR.x == end.x && JR.y == end.y) {
-						let checkSpace = $scope.board[FR.y][FR.x];
-						console.log(checkSpace.player);
-						if (
-							checkSpace.player != $scope.playerTurn &&
-							checkSpace.player != null
-						) {
-							console.log("JR");
-							doMove(start, end, checkSpace);
-							changeTurn();
-						}
-					}
-				}
-
-				// TODO: Check if against/near wall
-			} catch (error) {
-				console.error(error);
-			}
-		}
-
-		// Execute the Player's Move
-		function doMove(start_, end_, toDestroy_) {
+		function tryMove(start_, end_, toDestroy_) {
 			const start_row = start_.y;
 			const start_col = start_.x;
 
 			const end_row = end_.y;
 			const end_col = end_.x;
+
+			// start.selected = false;
 
 			try {
 				$scope.board[end_row][end_col] = new Piece(
@@ -310,6 +233,137 @@ angular
 							$scope.scoreP2 = parseInt($scope.scoreP2) + 1;
 							break;
 						case null:
+							console.error(
+								"Null was passed --> something isn't right"
+							);
+							break;
+						default:
+							break;
+					}
+
+					const destroy_row = toDestroy_.y;
+					const destroy_col = toDestroy_.x;
+					$scope.board[destroy_row][destroy_col] = new Piece(
+						null,
+						destroy_col,
+						destroy_row
+					);
+				}
+			} catch (error) {
+				console.log(error);
+			}
+			console.log($scope.board);
+		}
+
+		// Check if selected move is legal
+		function checkMove(end) {
+			// console.log("$scope.board");
+			// console.log($scope.board);
+			console.log($scope.board[end.y][end.x]);
+
+			let FL, JL, FR, JR;
+			let FL_, JL_, FR_, JR_; // represent going backwards
+
+			// dynamically set depending on $scope.playerTurn
+			if ($scope.playerTurn == P1) {
+				console.log(P1);
+				FL = { x: start.x - 1, y: start.y - 1 };
+				JL = { x: start.x - 2, y: start.y - 2 };
+				FR = { x: start.x + 1, y: start.y - 1 };
+				JR = { x: start.x + 2, y: start.y - 2 };
+				if (start.isKing) {
+					// TODO: FL_, JL_, FR_, JR_
+				}
+			} else {
+				console.log(P2);
+				FL = { x: start.x + 1, y: start.y + 1 };
+				JL = { x: start.x + 2, y: start.y + 2 };
+				FR = { x: start.x - 1, y: start.y + 1 };
+				JR = { x: start.x - 2, y: start.y + 2 };
+				if (start.isKing) {
+					// TODO: FL_, JL_, FR_, JR_
+				}
+			}
+
+			try {
+				if (end.player == null) {
+					// Check Left Normal
+					if (FL.x == end.x && FL.y == end.y) {
+						console.log("FL");
+						doMove(start, end, null);
+						changeTurn();
+					}
+					// Check Left Jump
+					if (JL.x == end.x && JL.y == end.y) {
+						let hopped = $scope.board[FL.y][FL.x];
+						console.log(hopped.player);
+						if (
+							hopped.player != $scope.playerTurn &&
+							hopped.player != null
+						) {
+							console.log("JL");
+							doMove(start, end, hopped);
+							changeTurn();
+						}
+					}
+					// Check Right Normal
+					if (FR.x == end.x && FR.y == end.y) {
+						console.log("FR");
+						doMove(start, end, null);
+						changeTurn();
+					}
+					// Check Right Jump
+					if (JR.x == end.x && JR.y == end.y) {
+						let checkSpace = $scope.board[FR.y][FR.x];
+						console.log(checkSpace.player);
+						if (
+							checkSpace.player != $scope.playerTurn &&
+							checkSpace.player != null
+						) {
+							console.log("JR");
+							doMove(start, end, checkSpace);
+							changeTurn();
+						}
+					}
+				}
+			} catch (error) {
+				console.error(error);
+			}
+		}
+
+		// Execute the Player's Move
+		function doMove(start_, end_, toDestroy_) {
+			const start_row = start_.y;
+			const start_col = start_.x;
+
+			const end_row = end_.y;
+			const end_col = end_.x;
+
+			// start.selected = false;
+
+			try {
+				$scope.board[end_row][end_col] = new Piece(
+					$scope.playerTurn,
+					end_col,
+					end_row
+				);
+				$scope.board[start_row][start_col] = new Piece(
+					null,
+					start_col,
+					start_row
+				);
+				if (toDestroy_) {
+					switch ($scope.playerTurn) {
+						case P1:
+							$scope.scoreP1 = parseInt($scope.scoreP1) + 1;
+							break;
+						case P2:
+							$scope.scoreP2 = parseInt($scope.scoreP2) + 1;
+							break;
+						case null:
+							console.error(
+								"Null was passed --> something isn't right"
+							);
 							break;
 						default:
 							break;
