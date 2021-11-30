@@ -15,7 +15,6 @@ angular
 			this.player = player;
 			this.x = x;
 			this.y = y;
-			this.isKing = false;
 			this.isChoice = false;
 			this.myList = [];
 		}
@@ -100,9 +99,9 @@ angular
 					// Assign base
 					base = square;
 					// Get available moves
-					let moves = getMoves(square);
+					// let moves = getMoves(square);
 					// Highlight playable moves
-					showMoves(moves);
+					// showMoves(moves);
 					// Reset variables
 					isMoving = true;
 				}
@@ -112,6 +111,9 @@ angular
 				console.log(square);
 				checkMove(square);
 			}
+			try {
+				$scope.base_ = `{player: ${base.player}, x: ${base.x}, y: ${base.y}}`;
+			} catch (error) {}
 		};
 
 		$(document).ready(function () {
@@ -128,14 +130,11 @@ angular
 
 		// Check if selected move is legal
 		function checkMove(destination) {
-			console.log("$scope.board");
-			console.log($scope.board);
+			// console.log("$scope.board");
+			// console.log($scope.board);
 			console.log($scope.board[destination.y][destination.x]);
 
-			let FL,
-				JL,
-				FR,
-				JR = 0;
+			let FL, JL, FR, JR;
 			// dynamically set depending on $scope.playerturn
 			if ($scope.playerturn == P1) {
 				console.log(P1);
@@ -157,7 +156,6 @@ angular
 					if (FL.x == destination.x && FL.y == destination.y) {
 						console.log("FL");
 						doMove(base, destination, null);
-						// reset turn variables --> next player turn
 						changeTurn();
 					}
 					// Check Left Jump
@@ -169,6 +167,7 @@ angular
 							checkSpace.player != null
 						) {
 							console.log("JL");
+							changeTurn();
 						}
 					}
 
@@ -196,12 +195,15 @@ angular
 			let end_col = end_.x;
 
 			try {
-				$scope.board[end_row][end_col] =
-					$scope.board[start_row][start_col];
-				$scope.board[start_row][start_col] = new Piece(
-					null,
+				$scope.board[end_row][end_col] = new Piece(
+					$scope.playerturn,
 					end_col,
 					end_row
+				);
+				$scope.board[start_row][start_col] = new Piece(
+					null,
+					start_col,
+					start_row
 				);
 				if (toDestroy_) {
 					switch ($scope.playerturn) {
@@ -229,6 +231,7 @@ angular
 			} catch (error) {
 				console.log(error);
 			}
+			console.log($scope.board);
 		}
 
 		// Returns all playable moves
