@@ -93,7 +93,6 @@ angular
 					// New Turn
 					console.log("\nNEW TURN");
 					console.log(tile);
-					// Assign base
 					start = tile;
 					// Get available moves
 					// let moves = getMoves(square);
@@ -113,7 +112,6 @@ angular
 			} catch (error) {}
 		};
 
-		// ? So... isn't this kinda pointless now?
 		/*
 		$(document).ready(function () {
 			const divs = document.getElementsByClassName("square");
