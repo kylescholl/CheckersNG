@@ -1,12 +1,13 @@
 <h1>Welcome to our AngularJS Checkers GitHub Repo!</h1>
+
 <h2>Penn State & Hof University</h2>
 
 <h3>How Branches will work:</h3>
 
-- There is a **main** branch which holds the **working bug-free code**
-- Everyone will have their **own** branch for development
-- We should consider having a **dev** branch that is a clone of master
-  - That way we can verify the new changes work in the master version
+-   There is a **main** branch which holds the **working bug-free code**
+-   Everyone will have their **own** branch for development
+-   We should consider having a **dev** branch that is a clone of master
+    -   That way we can verify the new changes work in the master version
 
 For info on what branches are and how they work, see [GitHub Docs - Branches](https://docs.github.com/en/github/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/about-branches)
 
