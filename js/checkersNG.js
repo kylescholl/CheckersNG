@@ -1,15 +1,15 @@
 angular
 	.module("checkersNG", [])
 	.controller("checkersController", function ($scope, $timeout) {
-		let isMoving = false;
-		let C_GREY = "#808080",
+		let C_P1 = "#D1603D",
+			C_P2 = "#808080",
 			C_BLACK = "#221D23",
-			C_WHITE = "#EEEEEE",
-			C_ORANGE = "#D1603D";
+			C_WHITE = "#EEEEEE";
 		let P1 = "Orange",
-			P2 = "Black",
-			BOARD_WIDTH = 8,
-			base = null;
+			P2 = "Black";
+		let BOARD_WIDTH = 8;
+		let base = null;
+		let isMoving = false;
 
 		function Piece(player, x, y) {
 			this.player = player;
@@ -27,44 +27,47 @@ angular
 			$scope.board = [];
 			isMoving = false;
 
-			for (let i = 0; i < BOARD_WIDTH; i++) {
-				$scope.board[i] = [];
-				for (let j = 0; j < BOARD_WIDTH; j++) {
-					// Player 1
+			for (let row = 0; row < BOARD_WIDTH; row++) {
+				$scope.board[row] = [];
+				for (let col = 0; col < BOARD_WIDTH; col++) {
 					if (
-						(i === BOARD_WIDTH - 2 && j % 2 === 0) ||
-						(i === BOARD_WIDTH - 1 && j % 2 === 1)
+						(row === BOARD_WIDTH - 2 && col % 2 === 0) ||
+						(row === BOARD_WIDTH - 1 && col % 2 === 1)
 					) {
-						$scope.board[i][j] = new Piece(P1, j, i);
+						$scope.board[row][col] = new Piece(P1, col, row);
 					} else if (
-						(i === 0 && j % 2 === 0) ||
-						(i === 1 && j % 2 === 1)
+						(row === 0 && col % 2 === 0) ||
+						(row === 1 && col % 2 === 1)
 					) {
-						console.log(j, i);
-						$scope.board[i][j] = new Piece(P2, j, i);
+						console.log(col, row);
+						$scope.board[row][col] = new Piece(P2, col, row);
 					} else {
-						$scope.board[i][j] = new Piece(null, j, i);
+						$scope.board[row][col] = new Piece(null, col, row);
 					}
 				}
 			}
-
-			// TODO: assign each space an id with xy coords
 		};
 
 		// Manually call at game load / startup
 		$scope.newGame();
 
 		// Player Piece Coloring
+		var counter_ = 0;
 		$scope.setStyling = function (square) {
+			// console.log(counter_);
 			if (square.player === P1) {
-				return { backgroundColor: C_ORANGE };
+				counter_++;
+				return { backgroundColor: C_P1 };
 			} else if (square.player === P2) {
-				return { backgroundColor: C_GREY };
+				counter_++;
+				return { backgroundColor: C_P2 };
 			} else {
+				counter_++;
 				return { backgroundColor: "none" };
 			}
 		};
 
+		// ! May need to remove
 		// Board Tile Coloring
 		$scope.setClass = function (square) {
 			if (square.y % 2 === 0) {
@@ -111,6 +114,18 @@ angular
 			}
 		};
 
+		$(document).ready(function () {
+			const divs = document.getElementsByClassName("square");
+			let index = 0;
+			for (let row = 0; row < BOARD_WIDTH; row++) {
+				for (let col = 0; col < BOARD_WIDTH; col++) {
+					const id = `x${col}-y${row}`;
+					divs[index].id = id;
+					index++;
+				}
+			}
+		});
+
 		// Check if selected move is legal
 		function checkMove(destination) {
 			console.log("$scope.board");
@@ -118,7 +133,7 @@ angular
 			console.log($scope.board[destination.y][destination.x]);
 
 			let FL, JL, FR, JR;
-			// dynamically set depending on playerturn
+			// dynamically set depending on $scope.playerturn
 			if ($scope.playerturn == P1) {
 				console.log(P1);
 				FL = { x: base.x - 1, y: base.y - 1 };
@@ -134,7 +149,7 @@ angular
 					// Check Left Normal
 					if (FL.x == destination.x && FL.y == destination.y) {
 						console.log("FL");
-						doMove("", base, destination);
+						doMove(base, destination, null);
 						// reset turn variables --> next player turn
 						changeTurn();
 					}
@@ -153,6 +168,8 @@ angular
 					// Check Right Normal
 					if (FR.x == destination.x && FR.y == destination.y) {
 						console.log("FR");
+						doMove(base, destination, null);
+						changeTurn();
 					}
 					// Check Right Jump
 				}
@@ -164,27 +181,47 @@ angular
 		}
 
 		// Execute the Player's Move
-		function doMove(move, base_, end_, destroy_) {
-			let base_row = base_.y;
-			let base_col = base_.x;
+		function doMove(start_, end_, toDestroy_) {
+			let start_row = start_.y;
+			let start_col = start_.x;
+
 			let end_row = end_.y;
 			let end_col = end_.x;
 
-			let base_ref = $scope.board[base_row][base_col];
-			let end_ref = $scope.board[end_row][end_col];
+			try {
+				$scope.board[end_row][end_col] =
+					$scope.board[start_row][start_col];
+				$scope.board[start_row][start_col] = new Piece(
+					null,
+					end_col,
+					end_row
+				);
+				if (toDestroy_) {
+					switch ($scope.playerturn) {
+						case P1:
+							$scope.scoreP1 = parseInt($scope.scoreP1) + 1;
+							break;
+						case P2:
+							$scope.scoreP2 = parseInt($scope.scoreP2) + 1;
+							break;
+						case null:
+							break;
+						default:
+							break;
+					}
 
-			switch (move) {
-				case "value":
-					break;
+					const destroy_row = toDestroy_.y;
+					const destroy_col = toDestroy_.x;
 
-				default:
-					break;
+					$scope.board[destroy_row][destroy_col] = new Piece(
+						null,
+						destroy_col,
+						destroy_row
+					);
+				}
+			} catch (error) {
+				console.log(error);
 			}
-
-			// move html img
-			// change $scope.board to match change
-			// remove old
-			// destroy if needed
 		}
 
 		// Returns all playable moves
@@ -201,10 +238,22 @@ angular
 		}
 
 		function changeTurn() {
-			// code here //
-		}
-
-		function resetChoices() {
-			// code //
+			resetChoices();
+			isMoving = false;
+			switch ($scope.playerturn) {
+				case P1:
+					$scope.playerturn = P2;
+					break;
+				case P2:
+					$scope.playerturn = P1;
+					break;
+				default:
+					break;
+			}
 		}
 	});
+
+// Located here for scope visibility from HTML button call
+function resetChoices() {
+	base = null;
+}

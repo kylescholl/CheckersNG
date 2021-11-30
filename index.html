@@ -1,43 +1,40 @@
 <!DOCTYPE html>
 <html ng-app="checkersNG">
-	<!-- <html> -->
+<!-- <html> -->
 
-	<head>
-		<title>checkersNG</title>
-		<link rel="stylesheet" type="text/css" href="checkersNG.css" />
-	</head>
+<head>
+	<title>checkersNG</title>
+	<link rel="stylesheet" type="text/css" href="css/checkersNG.css" />
+</head>
 
-	<body ng-controller="checkersController">
-		<div id="gameContainer">
-			<div class="row" ng-repeat="row in board">
-				<div
-					class="square"
-					ng-style="setClass(square)"
-					ng-repeat="square in row track by $index"
-					ng-click="select(square)"
-				>
-					<div ng-style="setStyling(square)" class="circle"></div>
-				</div>
+<body ng-controller="checkersController">
+	<div id="gameContainer">
+		<div class="row" ng-repeat="row in board">
+			<div class="square" ng-style="setClass(square)" ng-repeat="square in row track by $index"
+				ng-click="select(square)">
+				<div ng-style="setStyling(square)" class="circle"></div>
 			</div>
 		</div>
-		<div>Player Turn : {{playerturn}}</div>
-		<div>White Score : {{scoreP1}}</div>
-		<div>Black Score : {{scoreP2}}</div>
+	</div>
 
-		<button mat-flat-button>Basic</button>
-		<button mat-flat-button color="primary">Primary</button>
-		<button mat-flat-button color="accent">Accent</button>
-		<button mat-flat-button color="warn">Warn</button>
-		<button mat-flat-button disabled>Disabled</button>
+	<div class="textdisplay">Player Turn : {{playerturn}}</div>
+	<div class="textdisplay">White Score : {{scoreP1}}</div>
+	<div class="textdisplay">Black Score : {{scoreP2}}</div>
 
-		<script type="text/javascript" src="angular.js"></script>
-		<script type="text/javascript" src="checkersNG.js"></script>
-	</body>
+	<div class="btn-container">
+		<button type="button" class="btn btn-primary" onclick="resetChoices()">Reset Piece Selection</button>
+	</div>
 
-	<!-- <body onload="gameStart(8,8)">
+	<script type="text/javascript" src="js/angular.js"></script>
+	<script type="text/javascript" src="js/jquery-3.6.0.min.js"></script>
+	<script type="text/javascript" src="js/checkersNG.js"></script>
+</body>
+
+<!-- <body onload="gameStart(8,8)">
     <div id="buttonArea"></div>
     <input type="button" id="btnNewGame" onClick="resetButtons()" value="Reset Buttons" />
     <input type="button" id="btnResetSelection" onClick="resetSelection()" value="Click to reset starting piece" />
     <input type="button" id="btnTest" onClick="initializeBoard()" value="--set initial positions--" />
 </body> -->
+
 </html>
