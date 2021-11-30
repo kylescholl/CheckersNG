@@ -93,7 +93,6 @@ angular
 					// New Turn
 					console.log("\nNEW TURN");
 					console.log(tile);
-					// Assign base
 					start = tile;
 					// Get available moves
 					// let moves = getMoves(square);
