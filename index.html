@@ -1,37 +1,44 @@
 <!DOCTYPE html>
 <html ng-app="checkersNG">
-<!-- <html> -->
+    <head>
+        <title>checkersNG</title>
+        <link rel="stylesheet" type="text/css" href="css/checkersNG.css" />
+    </head>
 
-<head>
-	<title>checkersNG</title>
-	<link rel="stylesheet" type="text/css" href="css/checkersNG.css" />
-</head>
+    <body ng-controller="checkersController">
+        <div id="gameContainer">
+            <div class="row" ng-repeat="row in board">
+                <div
+                    class="tile"
+                    ng-style="setClass(tile)"
+                    ng-repeat="tile in row track by $index"
+                    ng-click="select(tile)"
+                >
+                    <div ng-style="setStyling(tile)" class="circle"></div>
+                </div>
+            </div>
+        </div>
 
-<body ng-controller="checkersController">
-	<div id="gameContainer">
-		<div class="row" ng-repeat="row in board">
-			<div class="tile" ng-style="setClass(tile)" ng-repeat="tile in row track by $index" ng-click="select(tile)">
-				<div ng-style="setStyling(tile)" class="circle"></div>
-			</div>
-		</div>
-	</div>
+        <div class="textDisplay">
+            <div>Player Turn : {{playerTurn}}</div>
+            <div>{{nameP1}} Score : {{scoreP1}}</div>
+            <div>{{nameP2}} Score : {{scoreP2}}</div>
 
-	<div class="textDisplay">
-		<div>Player Turn : {{playerTurn}}</div>
-		<div>{{nameP1}} Score : {{scoreP1}}</div>
-		<div>{{nameP2}} Score : {{scoreP2}}</div>
+            <div style="font-size: 1.5rem">{{selectedPiece}}</div>
+        </div>
 
-		<div style="font-size: 1.5rem;">{{selectedPiece}}</div>
-	</div>
+        <div class="btn-container">
+            <button
+                type="button"
+                ng-click="resetChoice()"
+                class="btn btn-custom"
+            >
+                Reset Piece Selection
+            </button>
+        </div>
 
-
-	<div class="btn-container">
-		<button type="button" ng-click="resetChoice()" class="btn btn-custom">Reset Piece Selection</button>
-	</div>
-
-	<script type="text/javascript" src="js/angular.js"></script>
-	<script type="text/javascript" src="js/jquery-3.6.0.min.js"></script>
-	<script type="text/javascript" src="js/checkersNG.js"></script>
-</body>
-
+        <script type="text/javascript" src="js/angular.js"></script>
+        <script type="text/javascript" src="js/jquery-3.6.0.min.js"></script>
+        <script type="text/javascript" src="js/checkersNG.js"></script>
+    </body>
 </html>
