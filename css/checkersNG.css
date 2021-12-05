@@ -9,6 +9,9 @@
 
 body {
 	background-color: #221d23;
+	background-image: url("https://pixabay.com/get/gdb592f114659c09b0adc5ce3ce09534d5fa0daedf632cca17dac16a4e252650b409fe14eee4ae4b03c68854c4c2dbd4a23679d43847c20af96fe399c519feac61b9a7aeb872f61984427e7db1b3a4813_1920.jpg");
+	background-repeat: no-repeat;
+	background-size: cover;
 }
 
 div.textDisplay {
