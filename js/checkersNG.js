@@ -13,6 +13,7 @@ angular
 		let isMoving = false;
 		let start = null;
 		let gameover = false;
+		let winner = "";
 
 		function Piece(player, x, y) {
 			this.player = player;
@@ -38,15 +39,20 @@ angular
 						(row === BOARD_WIDTH - 2 && col % 2 === 0) ||
 						(row === BOARD_WIDTH - 1 && col % 2 === 1)
 					) {
-						$scope.board[row][col] = new Piece(P1, col, row);
+						$scope.board[row][col] = new Piece(P1, col, row, false);
 					} else if (
 						(row === 0 && col % 2 === 0) ||
 						(row === 1 && col % 2 === 1)
 					) {
 						console.log(col, row);
-						$scope.board[row][col] = new Piece(P2, col, row);
+						$scope.board[row][col] = new Piece(P2, col, row, false);
 					} else {
-						$scope.board[row][col] = new Piece(null, col, row);
+						$scope.board[row][col] = new Piece(
+							null,
+							col,
+							row,
+							false
+						);
 					}
 				}
 			}
@@ -96,7 +102,8 @@ angular
 						// New Turn
 						console.log("\nNEW TURN");
 						console.log(tile);
-						start = tile;
+						// start = tile;
+						start = $scope.board[tile.y][tile.x];
 						// Get available moves
 						// let moves = getMoves(square);
 						// Highlight playable moves
@@ -107,23 +114,51 @@ angular
 				} else {
 					// Mid Turn
 					console.log("\nMID TURN");
-					console.log(tile);
+					console.log(getBoardPiece(tile));
 					checkMove(tile);
 				}
+
+				// let player_;
+				// player_ = start.player == null ? "null" : start.player;
+				// console.log("\t{ " + player_ + " }");
+
+				// if (start.player == null) {
+				// 	player_ = "null";
+				// } else {
+				// 	player_ = start.player;
+				// }
+				// console.log("\t{ " + player_ + " }");
+
 				try {
+					// let player_;
+					// console.log("\t{ " + player_ + " }");
+					// // player_ = start.player == null ? "null" : start.player;
+					// start.player == null
+					// 	? (player_ = "null")
+					// 	: (player_ = start.player);
+					// console.log("\t{ " + player_ + " }");
+
+					// if (start.player == null) {
+					// 	player_ = "null";
+					// } else {
+					// 	player_ = start.player;
+					// }
 					$scope.selectedPiece = `{${start.player}, (${start.x}, ${start.y})}`;
 				} catch (error) {
-					console.error(error);
+					// start.player always returns null on an empty tile
+					// console.error(error);
 				}
 			}
 		};
 
 		// Check if selected move is legal
-		function checkMove(end) {
+		function checkMove(tile) {
+			const end = $scope.board[tile.y][tile.x];
+
 			console.log($scope.board[end.y][end.x]);
 
 			let FL, JL, FR, JR;
-			let FL_, JL_, FR_, JR_; // represent going backwards
+			let FL_K, JL_K, FR_K, JR_K; // represent going backwards
 			// dynamically set depending on $scope.playerTurn
 			if ($scope.playerTurn == P1) {
 				console.log(P1);
@@ -132,7 +167,10 @@ angular
 				FR = { x: start.x + 1, y: start.y - 1 };
 				JR = { x: start.x + 2, y: start.y - 2 };
 				if (start.isKing) {
-					FL_ = { x: start.x - 1, y: start.y - 1 };
+					FL_K = { x: start.x - 1, y: start.y + 1 };
+					JL_K = { x: start.x - 2, y: start.y + 2 };
+					FR_K = { x: start.x + 1, y: start.y + 1 };
+					JR_K = { x: start.x + 2, y: start.y + 2 };
 				}
 			} else {
 				console.log(P2);
@@ -141,21 +179,52 @@ angular
 				FR = { x: start.x - 1, y: start.y + 1 };
 				JR = { x: start.x - 2, y: start.y + 2 };
 				if (start.isKing) {
-					// code
+					// TODO
 				}
 			}
 
-			// TODO: kinging
+			/**
+			 * TODO: KINGING
+			 * 1. Make Piece king when conditions are met -- DONE
+			 * 2. Enable King movement
+			 * 3. Configure king piece visual (use text with "K" in circle)
+			 * 3a. Make sure piece stays as king (code) -- DONE
+			 * 3b. Make sure piece stays as king (visual)
+			 * 3c. Use CSS or AngularJS repeat to check for isKing?
+			 */
 
 			try {
 				if (end.player == null) {
-					// Check Left Normal
+					// Check if king
+					console.error("A", start.isKing);
+					if (start.isKing) {
+						// Backward Left
+						if (FL_K.x == end.x && FL_K.y == end.y) {
+							console.log("FL_K");
+							doMove(start, end, null);
+							changeTurn();
+						}
+						// Backward Jump Left
+						else if (JL_K.x == end.x && JL_K.y == end.y) {
+							let checkSpace = $scope.board[FL_K.y][FL_K.x];
+							console.log(checkSpace.player);
+							if (
+								checkSpace.player != $scope.playerTurn &&
+								checkSpace.player != null
+							) {
+								console.log("JL_K");
+								doMove(start, end, checkSpace);
+								changeTurn();
+							}
+						}
+					}
+					// Forward Left
 					if (FL.x == end.x && FL.y == end.y) {
 						console.log("FL");
 						doMove(start, end, null);
 						changeTurn();
 					}
-					// Check Left Jump
+					// Forward Jump Left
 					if (JL.x == end.x && JL.y == end.y) {
 						let checkSpace = $scope.board[FL.y][FL.x];
 						console.log(checkSpace.player);
@@ -168,13 +237,13 @@ angular
 							changeTurn();
 						}
 					}
-					// Check Right Normal
+					// Forward Right
 					if (FR.x == end.x && FR.y == end.y) {
 						console.log("FR");
 						doMove(start, end, null);
 						changeTurn();
 					}
-					// Check Right Jump
+					// Forward Jump Right
 					if (JR.x == end.x && JR.y == end.y) {
 						let checkSpace = $scope.board[FR.y][FR.x];
 						console.log(checkSpace.player);
@@ -189,24 +258,33 @@ angular
 					}
 				}
 			} catch (error) {
-				//console.error(error);
+				console.log("checkMove() error");
+				console.error(error);
 			}
 		}
 
 		// Execute the Player's Move
 		function doMove(start_, end_, toDestroy_) {
-			const start_row = start_.y,
-				start_col = start_.x;
-			const end_row = end_.y,
-				end_col = end_.x;
+			console.error("2", start_);
+			console.error("3", start);
+			const start_row = start_.y;
+			const start_col = start_.x;
+			const end_row = end_.y;
+			const end_col = end_.x;
 
 			let isKing = false;
+
 			if (
 				start_.isKing === true ||
 				end_row === 0 ||
 				end_row === BOARD_WIDTH - 1
 			) {
 				console.log("KING");
+				console.log(
+					`{ ${start_.isKing === true}, ${end_row === 0}, ${
+						end_row === BOARD_WIDTH - 1
+					} }`
+				);
 				isKing = true;
 			}
 			try {
@@ -248,6 +326,10 @@ angular
 			console.log($scope.board);
 		}
 
+		function getBoardPiece(piece) {
+			return $scope.board[piece.y][piece.x];
+		}
+
 		// Returns all playable moves
 		function getMoves(square) {
 			// FL
@@ -259,15 +341,6 @@ angular
 		// Shows All Playable Moves
 		function showMoves(moves) {
 			// code //
-		}
-
-		function checkGameover() {
-			if ($scope.scoreP1 > 8) {
-				console.log(`Gameover: Congratulations ${P1}!`);
-			}
-			if ($scope.scoreP2 > 8) {
-				console.log(`Gameover: Congratulations ${P2}!`);
-			}
 		}
 
 		function changeTurn() {
@@ -285,8 +358,44 @@ angular
 			}
 		}
 
+		function checkGameover() {
+			if ($scope.scoreP1 > 8) {
+				gameover == true;
+				winner = P1;
+			}
+			if ($scope.scoreP2 > 8) {
+				console.log(`Gameover: Congratulations ${P2}!`);
+				gameover == true;
+				winner = P2;
+			}
+		}
+
+		// Reset everything for new game
 		function showGameover() {
-			// code //
+			switch (winner) {
+				case null:
+					console.log("winner", "null");
+					console.error("winner is null");
+					break;
+				case (P1, P2):
+					console.log("winner", winner);
+					console.log(`Gameover: Congratulations ${winner}!`);
+					break;
+				case P2:
+					console.log(`Gameover: Congratulations ${winner}!`);
+					break;
+				default:
+					console.log("winner", "default");
+					break;
+			}
+
+			if (winner === P1) {
+				//code
+			} else if (winner === P2) {
+				console.log(`Gameover: Congratulations ${P1}!`);
+			} else {
+				console.error("Critical Bug: Game ");
+			}
 		}
 
 		$scope.resetChoice = function () {
