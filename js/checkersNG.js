@@ -1,19 +1,20 @@
 angular
 	.module("checkersNG", [])
 	.controller("checkersController", function ($scope, $timeout) {
-		const C_P1 = "#D1603D",
-			C_P2 = "#808080",
-			C_BLACK = "#221D23",
-			C_WHITE = "#EEEEEE";
+		const C_P1 = "#D1603D";
+		const C_P2 = "#808080";
 
-		const P1 = "Orange",
-			P2 = "Black";
+		const C_BLACK = "#221D23";
+		const C_WHITE = "#EEEEEE";
+
+		const P1 = "Orange";
+		const P2 = "Grey";
 
 		const BOARD_WIDTH = 8;
 		let isMoving = false;
 		let start = null;
 		let gameover = false;
-		let winner = "";
+		let winner = "none";
 
 		function Piece(player, x, y, isKing) {
 			this.player = player;
@@ -43,7 +44,6 @@ angular
 						(row === 0 && col % 2 === 0) ||
 						(row === 1 && col % 2 === 1)
 					) {
-						console.log(col, row);
 						$scope.board[row][col] = new Piece(P2, col, row, false);
 					} else {
 						$scope.board[row][col] = new Piece(
@@ -59,17 +59,6 @@ angular
 
 		// Manually call at game load / startup
 		$scope.newGame();
-
-		// Player Piece Coloring
-		$scope.setStyling = function (tile) {
-			if (tile.player === P1) {
-				return { backgroundColor: C_P1 };
-			} else if (tile.player === P2) {
-				return { backgroundColor: C_P2 };
-			} else {
-				return { backgroundColor: "none" };
-			}
-		};
 
 		// Board Tile Coloring
 		$scope.setClass = function (tile) {
@@ -88,9 +77,20 @@ angular
 			}
 		};
 
+		// Player Piece Coloring
+		$scope.setStyling = function (tile) {
+			if (tile.player === P1) {
+				return { backgroundColor: C_P1 };
+			} else if (tile.player === P2) {
+				return { backgroundColor: C_P2 };
+			} else {
+				return { backgroundColor: "none" };
+			}
+		};
+
 		// Player Square Selection
 		$scope.select = function (tile) {
-			console.log("");
+			console.log("====================================================");
 			checkGameover();
 			if (gameover === true) {
 				// gameover code //
@@ -101,8 +101,7 @@ angular
 						// New Turn
 						console.log("\nNEW TURN");
 						console.log(tile);
-						// start = tile;
-						start = $scope.board[tile.y][tile.x];
+						start = getBoardPiece(tile);
 						// Get available moves
 						// let moves = getMoves(square);
 						// Highlight playable moves
@@ -123,14 +122,13 @@ angular
 					// console.error(error);
 				}
 			}
+			checkGameover();
+			if (gameover === true) showGameover();
 		};
 
 		// Check if selected move is legal
 		function checkMove(tile) {
 			const end = getBoardPiece(tile);
-
-			console.log($scope.board[end.y][end.x]);
-
 			let FL, JL, FR, JR;
 			let FL_K, JL_K, FR_K, JR_K; // represent going backwards
 			// dynamically set depending on $scope.playerTurn
@@ -160,22 +158,11 @@ angular
 				}
 			}
 
-			/**
-			 * TODO: KINGING
-			 * 1. Make Piece king when conditions are met -- DONE
-			 * 2. Enable King movement
-			 * 3. Configure king piece visual (use text with "K" in circle)
-			 * 3a. Make sure piece stays as king (code) -- DONE
-			 * 3b. Make sure piece stays as king (visual)
-			 * 3c. Use CSS or AngularJS repeat to check for isKing?
-			 */
-
 			try {
 				if (end.player == null) {
 					// Check if king
 					if (start.isKing) {
 						// Backward Left
-						console.error("A", `${end.x}, ${end.y}`);
 						if (FL_K.x == end.x && FL_K.y == end.y) {
 							console.log("FL_K");
 							doMove(start, end, null);
@@ -184,7 +171,6 @@ angular
 						// Backward Jump Left
 						else if (JL_K.x == end.x && JL_K.y == end.y) {
 							let checkSpace = $scope.board[FL_K.y][FL_K.x];
-							console.log(checkSpace.player);
 							if (
 								checkSpace.player != $scope.playerTurn &&
 								checkSpace.player != null
@@ -202,7 +188,6 @@ angular
 						// Backward Jump Right
 						else if (JR_K.x == end.x && JR_K.y == end.y) {
 							let checkSpace = $scope.board[FR_K.y][FR_K.x];
-							console.log(checkSpace.player);
 							if (
 								checkSpace.player != $scope.playerTurn &&
 								checkSpace.player != null
@@ -253,15 +238,12 @@ angular
 					}
 				}
 			} catch (error) {
-				console.log("checkMove() error");
 				console.error(error);
 			}
 		}
 
 		// Execute the Player's Move
 		function doMove(start_, end_, toDestroy_) {
-			console.error("2", start_);
-			console.error("3", start);
 			const start_row = start_.y;
 			const start_col = start_.x;
 			const end_row = end_.y;
@@ -274,12 +256,7 @@ angular
 				end_row === 0 ||
 				end_row === BOARD_WIDTH - 1
 			) {
-				console.log("KING");
-				console.log(
-					`{ ${start_.isKing === true}, ${end_row === 0}, ${
-						end_row === BOARD_WIDTH - 1
-					} }`
-				);
+				console.log("KINGED");
 				isKing = true;
 			}
 			try {
@@ -328,19 +305,6 @@ angular
 			return $scope.board[piece.y][piece.x];
 		}
 
-		// Returns all playable moves
-		function getMoves(square) {
-			// FL
-			// JL
-			// FR
-			// JR
-		}
-
-		// Shows All Playable Moves
-		function showMoves(moves) {
-			// code //
-		}
-
 		function changeTurn() {
 			start = null;
 			isMoving = false;
@@ -357,45 +321,28 @@ angular
 		}
 
 		function checkGameover() {
-			if ($scope.scoreP1 > 8) {
-				gameover == true;
+			if ($scope.scoreP1 > 0) {
+				gameover = true;
 				winner = P1;
 			}
 			if ($scope.scoreP2 > 8) {
-				gameover == true;
+				gameover = true;
 				winner = P2;
 			}
 		}
 
 		// Reset everything for new game
 		function showGameover() {
-			switch (winner) {
-				case null:
-					console.log("winner", "null");
-					console.error("winner is null");
-					$scope.newGame();
-					break;
-				case (P1, P2):
-					console.error("case (P1, P2)");
-					console.log("winner", winner);
-					console.log(`Gameover: Congratulations ${winner}!`);
-					$scope.newGame();
-					break;
-				case P2:
-					console.log(`Gameover: Congratulations ${winner}!`);
-					$scope.newGame();
-					break;
-				default:
-					console.log("winner", "default");
-					break;
+			console.log("showGameover()");
+			if (winner == P1 || winner == P2) {
+				console.log(`Gameover: Congratulations ${winner}!`);
+				window.alert(`Gameover: Congratulations ${winner}!`);
+				$scope.newGame();
 			}
-
-			if (winner === P1) {
-				//code
-			} else if (winner === P2) {
-				console.log(`Gameover: Congratulations ${P1}!`);
-			} else {
-				console.error("Critical Bug: Game ");
+			if (winner == null) {
+				console.error("winner is null");
+				window.alert("ERROR: winner is null");
+				$scope.newGame();
 			}
 		}
 
