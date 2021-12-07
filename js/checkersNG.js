@@ -116,7 +116,9 @@ angular
 					checkMove(tile);
 				}
 				try {
-					$scope.selectedPiece = `{${start.player}, (${start.x}, ${start.y})}`;
+					$scope.selectedPiece = `{${start.player}, (${
+						start.x + 1
+					}, ${start.y + 1})}`;
 				} catch (error) {
 					// start.player always returns null on an empty tile
 					// console.error(error);
@@ -308,6 +310,7 @@ angular
 		function changeTurn() {
 			start = null;
 			isMoving = false;
+			$scope.selectedPiece = "";
 			switch ($scope.playerTurn) {
 				case P1:
 					$scope.playerTurn = P2;
@@ -321,11 +324,11 @@ angular
 		}
 
 		function checkGameover() {
-			if ($scope.scoreP1 > 0) {
+			if ($scope.scoreP1 > 7) {
 				gameover = true;
 				winner = P1;
 			}
-			if ($scope.scoreP2 > 8) {
+			if ($scope.scoreP2 > 7) {
 				gameover = true;
 				winner = P2;
 			}
