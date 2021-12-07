@@ -15,12 +15,11 @@ angular
 		let gameover = false;
 		let winner = "";
 
-		function Piece(player, x, y) {
+		function Piece(player, x, y, isKing) {
 			this.player = player;
 			this.x = x;
 			this.y = y;
-			this.isKing = false;
-			this.selected = false;
+			this.isKing = isKing;
 		}
 
 		$scope.newGame = function () {
@@ -117,32 +116,7 @@ angular
 					console.log(getBoardPiece(tile));
 					checkMove(tile);
 				}
-
-				// let player_;
-				// player_ = start.player == null ? "null" : start.player;
-				// console.log("\t{ " + player_ + " }");
-
-				// if (start.player == null) {
-				// 	player_ = "null";
-				// } else {
-				// 	player_ = start.player;
-				// }
-				// console.log("\t{ " + player_ + " }");
-
 				try {
-					// let player_;
-					// console.log("\t{ " + player_ + " }");
-					// // player_ = start.player == null ? "null" : start.player;
-					// start.player == null
-					// 	? (player_ = "null")
-					// 	: (player_ = start.player);
-					// console.log("\t{ " + player_ + " }");
-
-					// if (start.player == null) {
-					// 	player_ = "null";
-					// } else {
-					// 	player_ = start.player;
-					// }
 					$scope.selectedPiece = `{${start.player}, (${start.x}, ${start.y})}`;
 				} catch (error) {
 					// start.player always returns null on an empty tile
@@ -153,7 +127,7 @@ angular
 
 		// Check if selected move is legal
 		function checkMove(tile) {
-			const end = $scope.board[tile.y][tile.x];
+			const end = getBoardPiece(tile);
 
 			console.log($scope.board[end.y][end.x]);
 
@@ -179,7 +153,10 @@ angular
 				FR = { x: start.x - 1, y: start.y + 1 };
 				JR = { x: start.x - 2, y: start.y + 2 };
 				if (start.isKing) {
-					// TODO
+					FL_K = { x: start.x + 1, y: start.y - 1 };
+					JL_K = { x: start.x + 2, y: start.y - 2 };
+					FR_K = { x: start.x - 1, y: start.y - 1 };
+					JR_K = { x: start.x - 2, y: start.y - 2 };
 				}
 			}
 
@@ -196,9 +173,9 @@ angular
 			try {
 				if (end.player == null) {
 					// Check if king
-					console.error("A", start.isKing);
 					if (start.isKing) {
 						// Backward Left
+						console.error("A", `${end.x}, ${end.y}`);
 						if (FL_K.x == end.x && FL_K.y == end.y) {
 							console.log("FL_K");
 							doMove(start, end, null);
@@ -213,6 +190,24 @@ angular
 								checkSpace.player != null
 							) {
 								console.log("JL_K");
+								doMove(start, end, checkSpace);
+								changeTurn();
+							}
+						} // Backward Right
+						else if (FR_K.x == end.x && FR_K.y == end.y) {
+							console.log("FR_K");
+							doMove(start, end, null);
+							changeTurn();
+						}
+						// Backward Jump Right
+						else if (JR_K.x == end.x && JR_K.y == end.y) {
+							let checkSpace = $scope.board[FR_K.y][FR_K.x];
+							console.log(checkSpace.player);
+							if (
+								checkSpace.player != $scope.playerTurn &&
+								checkSpace.player != null
+							) {
+								console.log("JR_K");
 								doMove(start, end, checkSpace);
 								changeTurn();
 							}
@@ -291,7 +286,8 @@ angular
 				$scope.board[start_row][start_col] = new Piece(
 					null,
 					start_col,
-					start_row
+					start_row,
+					false
 				);
 				$scope.board[end_row][end_col] = new Piece(
 					$scope.playerTurn,
@@ -299,6 +295,7 @@ angular
 					end_row,
 					isKing
 				);
+
 				if (toDestroy_) {
 					switch ($scope.playerTurn) {
 						case P1:
@@ -317,7 +314,8 @@ angular
 					$scope.board[destroy_row][destroy_col] = new Piece(
 						null,
 						destroy_col,
-						destroy_row
+						destroy_row,
+						false
 					);
 				}
 			} catch (error) {
@@ -364,7 +362,6 @@ angular
 				winner = P1;
 			}
 			if ($scope.scoreP2 > 8) {
-				console.log(`Gameover: Congratulations ${P2}!`);
 				gameover == true;
 				winner = P2;
 			}
@@ -376,13 +373,17 @@ angular
 				case null:
 					console.log("winner", "null");
 					console.error("winner is null");
+					$scope.newGame();
 					break;
 				case (P1, P2):
+					console.error("case (P1, P2)");
 					console.log("winner", winner);
 					console.log(`Gameover: Congratulations ${winner}!`);
+					$scope.newGame();
 					break;
 				case P2:
 					console.log(`Gameover: Congratulations ${winner}!`);
+					$scope.newGame();
 					break;
 				default:
 					console.log("winner", "default");
