@@ -1,48 +1,45 @@
 <!DOCTYPE html>
 <html ng-app="checkersNG">
-    <head>
-        <title>checkersNG</title>
-        <link rel="stylesheet" type="text/css" href="css/checkersNG.css" />
-    </head>
 
-    <body ng-controller="checkersController">
-        <div id="gameContainer">
-            <div class="row" ng-repeat="row in board">
-                <div
-                    class="tile"
-                    ng-style="setClass(tile)"
-                    ng-repeat="tile in row track by $index"
-                    ng-click="select(tile)"
-                >
-                    <div ng-style="setStyling(tile)" class="circle"></div>
+<head>
+    <title>checkersNG</title>
+    <link rel="stylesheet" type="text/css" href="css/checkersNG.css" />
+</head>
+
+<body ng-controller="checkersController">
+    <div id="gameContainer">
+        <div class="row" ng-repeat="row in board">
+            <!-- Board Tiles -->
+            <div class="tile" ng-style="setClass(tile)" ng-repeat="tile in row track by $index" ng-click="select(tile)">
+                <!-- Player Pieces -->
+                <div class="circle" ng-style="setStyling(tile)" ng-switch="tile.isKing">
+                    <p class="king" ng-switch-when="true">K</p>
+                    <p class="king" ng-switch-default></p>
                 </div>
             </div>
         </div>
+    </div>
 
-        <div class="textDisplay">
-            <div>Player Turn : {{playerTurn}}</div>
-            <div>{{nameP1}} Score : {{scoreP1}}</div>
-            <div>{{nameP2}} Score : {{scoreP2}}</div>
+    <div class="textDisplay">
+        <div>Player Turn : {{playerTurn}}</div>
+        <div>{{nameP1}} Score : {{scoreP1}}</div>
+        <div>{{nameP2}} Score : {{scoreP2}}</div>
 
-            <div style="font-size: 1.5rem">{{selectedPiece}}</div>
-        </div>
+        <div style="font-size: 1.5rem">{{selectedPiece}}</div>
+    </div>
 
-        <div class="btn-container">
-            <button
-                type="button"
-                ng-click="resetChoice()"
-                class="btn btn-custom"
-            >
-                Reset Piece Selection
-            </button>
-        </div>
+    <div class="btn-container">
+        <button type="button" ng-click="resetChoice()" class="btn btn-custom">
+            Reset Move Piece Selection
+        </button>
+    </div>
 
-        <script type="text/javascript" src="js/angular.js"></script>
-        <script type="text/javascript" src="js/jquery-3.6.0.min.js"></script>
-        <script type="text/javascript" src="js/checkersNG.js"></script>
-		
-		<audio loop autoplay controls>
+    <script type="text/javascript" src="js/angular.js"></script>
+    <script type="text/javascript" src="js/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript" src="js/checkersNG.js"></script>
+</body>
+
+<audio loop autoplay controls>
 			<source src = "mp3/honor-and-sword-main-11222.mp3" type="audio/mpeg">
 		</audio>
-    </body>
 </html>

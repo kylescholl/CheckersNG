@@ -3,6 +3,7 @@
 	--black: #221d23;
 	--orange: #d1603d;
 	--orange-dark: #db471a;
+	--tile-size: 3.75rem;
 	/* font-size: 24px; */
 	font-family: "Courier New", Courier, monospace;
 }
@@ -60,14 +61,9 @@ div.btn-container {
 
 .tile {
 	float: left;
-	width: 3.75rem;
-	height: 3.75rem;
+	width: var(--tile-size);
+	height: var(--tile-size);
 }
-
-/* .tile:hover {
-	cursor: pointer;
-	opacity: 0.8;
-} */
 
 .tile:hover:nth-child(2n + 1) {
 	cursor: pointer;
@@ -76,12 +72,30 @@ div.btn-container {
 
 .circle {
 	border-radius: 50%;
-	width: 95%;
-	height: 95%;
-	margin: 3%;
+	width: calc((var(--tile-size) * 0.95));
+	height: calc((var(--tile-size) * 0.95));
+	/* margin: 3%; */
 	color: cyan;
 	text-align: center;
 	line-height: 56px;
+	position: relative;
+	/* top: 50%;
+	margin-top: -calc((var(--tile-size) * 0.95) / 2);
+	left: 50%;
+	margin-left: -calc((var(--tile-size) * 0.95) / 2); */
+
+	/* left: 50%; */
+	/* margin-left: ; */
+	/* transform: translateX(-50%); */
+	/* top: 50%; */
+	/* transform: translate(-50%); */
+}
+
+.king {
+	font-size: 2rem;
+	font-weight: bold;
+	color: #24e500;
+	margin: 0;
 }
 
 #startGame {
