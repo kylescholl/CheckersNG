@@ -63,13 +63,17 @@ angular
 		// Board Tile Coloring
 		$scope.setClass = function (tile) {
 			if (tile.y % 2 === 0) {
+				// even rows
 				if (tile.x % 2 === 0) {
+					// even cols
 					return { backgroundColor: C_BLACK };
 				} else {
 					return { backgroundColor: C_WHITE };
 				}
 			} else {
+				// odd rows
 				if (tile.x % 2 === 1) {
+					// odd cols
 					return { backgroundColor: C_BLACK };
 				} else {
 					return { backgroundColor: C_WHITE };
@@ -93,7 +97,6 @@ angular
 			console.log("====================================================");
 			checkGameover();
 			if (gameover === true) {
-				// gameover code //
 				showGameover();
 			} else {
 				if (!isMoving) {
@@ -102,11 +105,6 @@ angular
 						console.log("\nNEW TURN");
 						console.log(tile);
 						start = getBoardPiece(tile);
-						// Get available moves
-						// let moves = getMoves(square);
-						// Highlight playable moves
-						// showMoves(moves);
-						// Reset variables
 						isMoving = true;
 					}
 				} else {
@@ -120,20 +118,21 @@ angular
 						start.x + 1
 					}, ${start.y + 1})}`;
 				} catch (error) {
-					// start.player always returns null on an empty tile
-					// console.error(error);
+					console.error(error);
 				}
 			}
 			checkGameover();
 			if (gameover === true) showGameover();
 		};
 
-		// Check if selected move is legal
+		// Check if selected move is playable
 		function checkMove(tile) {
 			const end = getBoardPiece(tile);
 			let FL, JL, FR, JR;
 			let FL_K, JL_K, FR_K, JR_K; // represent going backwards
 			// dynamically set depending on $scope.playerTurn
+
+			// Check and Set P1
 			if ($scope.playerTurn == P1) {
 				console.log(P1);
 				FL = { x: start.x - 1, y: start.y - 1 };
@@ -146,6 +145,7 @@ angular
 					FR_K = { x: start.x + 1, y: start.y + 1 };
 					JR_K = { x: start.x + 2, y: start.y + 2 };
 				}
+				// Check and Set P2
 			} else {
 				console.log(P2);
 				FL = { x: start.x + 1, y: start.y + 1 };
@@ -340,11 +340,14 @@ angular
 			if (winner == P1 || winner == P2) {
 				console.log(`Gameover: Congratulations ${winner}!`);
 				window.alert(`Gameover: Congratulations ${winner}!`);
+				winner = "";
+				gameover = false;
 				$scope.newGame();
 			}
 			if (winner == null) {
 				console.error("winner is null");
 				window.alert("ERROR: winner is null");
+				winner = "";
 				$scope.newGame();
 			}
 		}
